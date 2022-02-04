@@ -1,0 +1,12 @@
+# junk
+.DS_Store
+.idea/
+
+# python
+venv/
+__pycache__/
+
+# dotenv
+.env
+
+*.log
