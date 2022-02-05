@@ -25,36 +25,38 @@ def get_extract_dollar_regex():
 
     digits_decimal_exp = r'\.\d{1,}'
 
-    digits_number_exp = reg_seq(digits_integer_exp, reg_opt(digits_decimal_exp))
+    digits_number_exp = reg_seq(
+        digits_integer_exp, reg_opt(digits_decimal_exp))
 
-    nationality_abbr_exp = reg_or('XCD', 'AUD', 'BSD', 'BBD','BZD','BMD', 'BND','CAD','KYD','USD',  'FJD','GYD','HKD','JMD','KID','LRD','NAD','NZD','SGD','SBD','SRD','TWD','TTD','TVD',)
+    nationality_abbr_exp = reg_or('XCD', 'AUD', 'BSD', 'BBD', 'BZD', 'BMD', 'BND', 'CAD', 'KYD', 'USD',
+                                  'FJD', 'GYD', 'HKD', 'JMD', 'KID', 'LRD', 'NAD', 'NZD', 'SGD', 'SBD', 'SRD', 'TWD', 'TTD', 'TVD',)
 
     nationality_exp = reg_or(
         'Eastern Caribbean', 'Caribbean',
         'Australian',
         'Bahamian',
         'Barbadian',
-        'Belize', 
-        'Bermudian', 
-        'Brunei', 
-        'Canadian', 
-        'Cayman Islands', 'Cayman',  
+        'Belize',
+        'Bermudian',
+        'Brunei',
+        'Canadian',
+        'Cayman Islands', 'Cayman',
         'United States', 'American', 'US',
         'Fijian',
-        'Guyanese', 
-        'Hong Kong', 
-        'Jamaican', 
-        'Kiribati', 
-        'Liberian', 
-        'Namibian', 
-        'New Zealand', 
-        'Singapore', 
-        'Solomon Islands', 
+        'Guyanese',
+        'Hong Kong',
+        'Jamaican',
+        'Kiribati',
+        'Liberian',
+        'Namibian',
+        'New Zealand',
+        'Singapore',
+        'Solomon Islands',
         'Spanish',
-        'Surinamese', 
-        'New Taiwan', 
-        'Trinidad and Tobago', 
-        'Tuvaluan', 
+        'Surinamese',
+        'New Taiwan',
+        'Trinidad and Tobago',
+        'Tuvaluan',
     )
 
     exp = reg_or(
@@ -65,7 +67,19 @@ def get_extract_dollar_regex():
             reg_opt(reg_opt(space_exp), eng_hundreds_exp),
         ),
         reg_seq(
-            reg_or(eng_number_exp, digits_number_exp), 
+            reg_or(eng_number_exp, digits_number_exp),
+            space_exp,
+            reg_or('dollars', 'dollar'),
+            space_exp,
+            'and',
+            reg_or(eng_number_exp, digits_number_exp),
+            reg_opt(
+                space_exp,
+                reg_or('cents', 'cent'),
+            ),
+        ),
+        reg_seq(
+            reg_or(eng_number_exp, digits_number_exp),
             space_exp,
             reg_or(
                 reg_seq(
@@ -74,17 +88,21 @@ def get_extract_dollar_regex():
                 ),
                 nationality_abbr_exp
             )
-        )
+        ),
     )
     return exp
 
 
 def main() -> None:
-    if len(sys.argv) != 2:
-        print('Usage: python3 dollar_program.py <file>')
+    if len(sys.argv) != 2 and len(sys.argv) != 3:
+        print('Usage: python3 dollar_program.py [-regex] <file>')
         sys.exit(1)
 
     exp = get_extract_dollar_regex()
+
+    if sys.argv[1] == '-regex':
+        print(exp)
+        sys.exit(0)
 
     with open(sys.argv[1], 'r') as f:
         text = f.read()
