@@ -105,16 +105,16 @@ def main():
 
     Path(OUT_DIR).mkdir(parents=True, exist_ok=True)
 
-    if not out_mode:
-        print('Running dollar program on all OANC corpus...')
-        run_extraction_program(
-            DOLLAR_PROGRAM_PATH, ALL_OANC_CORPUS_PATH, ALL_OANC_DOLLAR_PROGRAM_OUT_PATH)
-        print('- Done.')
+    # if not out_mode:
+    #     print('Running dollar program on all OANC corpus...')
+    #     run_extraction_program(
+    #         DOLLAR_PROGRAM_PATH, ALL_OANC_CORPUS_PATH, ALL_OANC_DOLLAR_PROGRAM_OUT_PATH)
+    #     print('- Done.')
 
-        print('Running telephone regexp on all OANC corpus...')
-        run_extraction_program(
-            TELEPHONE_REGEXP_PATH, ALL_OANC_CORPUS_PATH, ALL_OANC_TELEPHONE_REGEXP_OUT_PATH)
-        print('- Done.')
+    #     print('Running telephone regexp on all OANC corpus...')
+    #     run_extraction_program(
+    #         TELEPHONE_REGEXP_PATH, ALL_OANC_CORPUS_PATH, ALL_OANC_TELEPHONE_REGEXP_OUT_PATH)
+    #     print('- Done.')
 
     if not out_mode:
         print('Running dollar program on test dollar corpus...')
@@ -140,8 +140,8 @@ def main():
         print('- Done.')
 
     evaluation_results = {
-        "all-OANC_dollar_program": get_output_statistics(ALL_OANC_DOLLAR_PROGRAM_OUT_PATH),
-        "all-OANC_telephone_regexp": get_output_statistics(ALL_OANC_TELEPHONE_REGEXP_OUT_PATH),
+        # "all-OANC_dollar_program": get_output_statistics(ALL_OANC_DOLLAR_PROGRAM_OUT_PATH),
+        # "all-OANC_telephone_regexp": get_output_statistics(ALL_OANC_TELEPHONE_REGEXP_OUT_PATH),
         "test_dollar_program": get_output_statistics(TEST_DOLLAR_PROGRAM_OUT_PATH),
         "test_telephone_regexp": get_output_statistics(TEST_TELEPHONE_REGEXP_OUT_PATH),
         "test_dollar_program_evaluation": test_dollar_evaluation,
