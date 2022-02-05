@@ -3,6 +3,7 @@ name: Evaluation
 on:
   push:
     branches: [ main ]
+    tags: [ "*" ]
 
 jobs:
   build:
@@ -24,3 +25,29 @@ jobs:
         INFLUX_TOKEN: ${{ secrets.INFLUX_TOKEN }}
       run: |
         python evaluation/evaluation.py
+    - name: Get tag name
+      if: startsWith(github.ref, 'refs/tags/')
+      run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+    - name: Package
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        python evaluation/evaluation.py -out > GRADE
+        cat GRADE
+        echo 'GRADE<<EOF' >> $GITHUB_ENV
+        cat GRADE >> $GITHUB_ENV
+        echo 'EOF' >> $GITHUB_ENV
+        mkdir package
+        cp src/regex_utils.py package
+        cp src/dollar_program.py package
+        cp src/telephone_regexp.py package
+        cp out/test_dollar_program.txt package/dollar_output.txt
+        cp out/test_telephone_regex.txt package/telephone_output.txt
+        cd package && zip -r nlp-homework-2_zz2960_${TAG}.zip *.py *.txt
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        body: ${{ env.GRADE }}
+        files: |
+          package/nlp-homework-2_zz2960_${{ env.TAG }}.zip
+          out/evaluation_results.json

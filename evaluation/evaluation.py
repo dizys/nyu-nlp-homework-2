@@ -1,3 +1,4 @@
+import sys
 import os
 from os import path
 from pathlib import Path
@@ -100,34 +101,43 @@ def report_evaluation_results(evaluation_results):
 
 
 def main():
+    out_mode = '-out' in sys.argv
+
     Path(OUT_DIR).mkdir(parents=True, exist_ok=True)
 
-    print('Running dollar program on all OANC corpus...')
-    run_extraction_program(
-        DOLLAR_PROGRAM_PATH, ALL_OANC_CORPUS_PATH, ALL_OANC_DOLLAR_PROGRAM_OUT_PATH)
-    print('- Done.')
+    if not out_mode:
+        print('Running dollar program on all OANC corpus...')
+        run_extraction_program(
+            DOLLAR_PROGRAM_PATH, ALL_OANC_CORPUS_PATH, ALL_OANC_DOLLAR_PROGRAM_OUT_PATH)
+        print('- Done.')
 
-    print('Running telephone regexp on all OANC corpus...')
-    run_extraction_program(
-        TELEPHONE_REGEXP_PATH, ALL_OANC_CORPUS_PATH, ALL_OANC_TELEPHONE_REGEXP_OUT_PATH)
-    print('- Done.')
+        print('Running telephone regexp on all OANC corpus...')
+        run_extraction_program(
+            TELEPHONE_REGEXP_PATH, ALL_OANC_CORPUS_PATH, ALL_OANC_TELEPHONE_REGEXP_OUT_PATH)
+        print('- Done.')
 
-    print('Running dollar program on test dollar corpus...')
+    if not out_mode:
+        print('Running dollar program on test dollar corpus...')
     run_extraction_program(
         DOLLAR_PROGRAM_PATH, TEST_DOLLAR_PHONE_CORPUS_PATH, TEST_DOLLAR_PROGRAM_OUT_PATH)
-    print('- Done.')
+    if not out_mode:
+        print('- Done.')
 
-    print('Running telephone regexp on test dollar corpus...')
+    if not out_mode:
+        print('Running telephone regexp on test dollar corpus...')
     run_extraction_program(
         TELEPHONE_REGEXP_PATH, TEST_DOLLAR_PHONE_CORPUS_PATH, TEST_TELEPHONE_REGEXP_OUT_PATH)
-    print('- Done.')
+    if not out_mode:
+        print('- Done.')
 
-    print('Evaluating output...')
+    if not out_mode:
+        print('Evaluating output...')
     test_dollar_evaluation = evaluate_outputs(
         TEST_DOLLAR_REFERENCE_PATH, TEST_DOLLAR_PROGRAM_OUT_PATH)
     test_phone_evaluation = evaluate_outputs(
         TEST_PHONE_REFERENCE_PATH, TEST_TELEPHONE_REGEXP_OUT_PATH)
-    print('- Done.')
+    if not out_mode:
+        print('- Done.')
 
     evaluation_results = {
         "all-OANC_dollar_program": get_output_statistics(ALL_OANC_DOLLAR_PROGRAM_OUT_PATH),
@@ -138,18 +148,31 @@ def main():
         "test_telephone_regexp_evaluation": test_phone_evaluation,
     }
 
-    print('Writing evaluation results to file...')
+    if not out_mode:
+        print('Writing evaluation results to file...')
 
-    with open(EVALUATION_RESULTS_PATH, 'w') as f:
-        json.dump(evaluation_results, f, indent=4)
-        print(f"- Done. Results written to file: {EVALUATION_RESULTS_PATH}")
+        with open(EVALUATION_RESULTS_PATH, 'w') as f:
+            json.dump(evaluation_results, f, indent=4)
+            print(f"- Done. Results written to file: {EVALUATION_RESULTS_PATH}")
 
     print('Evaluation results:')
-    print(json.dumps(evaluation_results, indent=4))
+    if not out_mode:
+        print(json.dumps(evaluation_results, indent=4))
+    else:
+        print('- Dollar program precision: ' + str(test_dollar_evaluation['precision']))
+        print('- Dollar program recall: ' + str(test_dollar_evaluation['recall']))
+        print('- Telephone regexp precision: ' + str(test_phone_evaluation['precision']))
+        print('- Telephone regexp recall: ' + str(test_phone_evaluation['recall']))
 
-    print('Reporting evaluation results to InfluxDB...')
-    report_evaluation_results(evaluation_results)
-    print('- Done.')
+    if not out_mode:
+        print('Reporting evaluation results to InfluxDB...')
+        report_evaluation_results(evaluation_results)
+        print('- Done.')
+
+    score = (test_dollar_evaluation['precision'] + test_dollar_evaluation['recall'] +
+             test_phone_evaluation['precision'] + test_phone_evaluation['recall']) / 4
+
+    print(f'Total score: {score}')
 
 
 if __name__ == '__main__':
