@@ -1,6 +1,3 @@
-def test():
-    print("test")
-
 def reg_or(*args):
     body = "|".join(args)
     return f"(?:{body})"
