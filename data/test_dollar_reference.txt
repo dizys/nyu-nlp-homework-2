@@ -1,5 +1,5 @@
 half a dollar
-from one to three Spanish dollars
+three Spanish dollars
 30,000 dollars
 50,000 dollars
 sixteen dollars
@@ -13,7 +13,7 @@ a dollar
 fifty cents
 Six dollars
 fifty cents
-eight or ten dollars
+ten dollars
 two dollars
 fifteen cents
 eight dollars
