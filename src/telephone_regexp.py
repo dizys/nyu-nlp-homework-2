@@ -1,18 +1,19 @@
 import re
 import sys
-from regex_utils import reg_neg_lookahead, reg_or, reg_opt, reg_seq, reg_opt_rep
+from regex_utils import reg_neg_lookahead, reg_neg_lookbehind, reg_or, reg_opt, reg_seq, reg_opt_rep
 
 
 def get_telephone_regex():
-    space_exp = r'[\s\t\]{1,10}'
+    space_exp = r'[\s\t\n]{1,10}'
     delimiter_exp = r'\-'
 
     country_code_exp = r'\+[0-9]{1,3}'
-    country_code_part = reg_seq(country_code_exp, reg_or(space_exp, delimiter_exp))
+    country_code_part = reg_seq(
+        country_code_exp, reg_or(space_exp, delimiter_exp))
 
     area_code_exp = r'[0-9]{3}'
     area_code_part = reg_seq(
-        reg_or(area_code_exp, reg_seq(r'\(', area_code_exp, r'\)')), 
+        reg_or(area_code_exp, reg_seq(r'\(', area_code_exp, r'\)')),
         reg_opt(reg_or(space_exp, delimiter_exp))
     )
 
@@ -21,7 +22,7 @@ def get_telephone_regex():
     line_number_exp = r'[0-9]{4}'
 
     exp = reg_seq(
-        reg_neg_lookahead(r'\d'),
+        reg_neg_lookbehind(r'[\d\-\$]'),
         reg_opt(
             reg_opt(country_code_part),
             area_code_part,
