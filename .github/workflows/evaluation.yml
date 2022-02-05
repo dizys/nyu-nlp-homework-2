@@ -41,7 +41,7 @@ jobs:
         cp src/dollar_program.py package
         cp src/telephone_regexp.py package
         cp out/test_dollar_program.txt package/dollar_output.txt
-        cp out/test_telephone_regex.txt package/telephone_output.txt
+        cp out/test_telephone_regexp.txt package/telephone_output.txt
         cd package && zip -r nlp-homework-2_zz2960_${TAG}.zip *.py *.txt
     - name: Release
       uses: softprops/action-gh-release@v1
