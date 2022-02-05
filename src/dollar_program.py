@@ -5,7 +5,7 @@ from regex_utils import reg_or, reg_opt, reg_seq, reg_opt_rep
 
 def get_extract_dollar_regex():
     space_exp = r'[\s\t\n]{1,10}'
-    eng_digit_exp = reg_or('a', 'half', 'zero', 'one', 'two', 'three',
+    eng_digit_exp = reg_or('a', 'half', 'quarter', 'zero', 'one', 'two', 'three',
                            'four', 'five', 'six', 'seven', 'eight', 'nine')
     eng_teen_exp = reg_or('ten', 'eleven', 'twelve', 'thirteen', 'fourteen',
                           'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen')
@@ -63,6 +63,7 @@ def get_extract_dollar_regex():
         reg_seq(
             reg_opt('US', reg_opt(space_exp)),
             r'\$',
+            reg_opt(space_exp),
             digits_number_exp,
             reg_opt(reg_opt(space_exp), eng_hundreds_exp),
         ),
